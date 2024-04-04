@@ -11,4 +11,6 @@ public class CountryController {
     public String addcountry(){
         return "done";
     }
+
 }
+//http://localhost:8080/api/v1/countries/addCountry

@@ -12,44 +12,37 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 @Service
 public class JWTService {
-    @Value("${jwt.algorithms.key}")
+    @Value("${jwt.algorithm.key}") // Corrected property name
     private String algorithmKey;
-    @Value("${jwt.issuer")
+
+    @Value("${jwt.issuer}") // Ensure issuer property is correctly configured in your application.properties/yml
     private String issuer;
+
     @Value("${jwt.expireDuration}")
     private int expirytime;
 
     private Algorithm algorithm;
 
     private final static String USER_NAME="username";
-    //it give algorithm
+
     @PostConstruct
     public void postConstruct(){
-//        System.out.println(algorithmKey);
-//        System.out.println(issuer);
-//        System.out.println(expirytime);
-         algorithm = Algorithm.HMAC256(algorithmKey);
-
-
+        algorithm = Algorithm.HMAC256(algorithmKey);
     }
-    public String generateToken(PropertyUser user){
-     return JWT.create()
-                .withClaim("USER_NAME",user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+expirytime))
+
+    public String generateToken(PropertyUser propertyUser){
+        return JWT.create()
+                .withClaim(USER_NAME,propertyUser.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + expirytime))
                 .withIssuer(issuer)
                 .sign(algorithm);
-
     }
-    //verify the token and return username if valid
+
     public String getUsername(String token){
-        //rwbv(rosy with pony v)
-        DecodedJWT decodedJWT=JWT.require(algorithm)
+        DecodedJWT decodedJWT = JWT.require(algorithm)
                 .withIssuer(issuer)
-               .build()
-               .verify(token);
-        //extract username
-      return  decodedJWT.getClaim(USER_NAME).asString();
-
+                .build()
+                .verify(token);
+        return decodedJWT.getClaim(USER_NAME).asString();
     }
-
 }

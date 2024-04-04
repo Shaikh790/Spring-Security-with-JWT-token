@@ -8,6 +8,7 @@ import com.airbnb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,20 +26,13 @@ public class UserController {
     @PostMapping("/addUsers")
     public ResponseEntity<String> addUser(@RequestBody PropertyUserDto dto) {
         PropertyUser user = userService.addUser(dto);
-
+        System.out.println(dto);
         if (user!=null){
 
 
         return new ResponseEntity<>("sign up succesfully", HttpStatus.CREATED);
         }
         return new ResponseEntity<>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
     }
 
 
@@ -58,4 +52,11 @@ public class UserController {
         return new ResponseEntity<>("Invalid Credential ", HttpStatus.UNAUTHORIZED);
         //http://localhost:8080/api/v1/users/login
     }
+
+
+    @GetMapping("/profile")
+     public  PropertyUser getCurrentProfile(@AuthenticationPrincipal PropertyUser propertyUser){
+        return propertyUser;
+     }
+   //http://localhost:8080/api/v1/users/profile
 }
